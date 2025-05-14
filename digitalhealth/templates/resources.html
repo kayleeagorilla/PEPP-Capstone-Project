@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!--Necessary for Bootstrap to work-->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+
+  <style>
+    .bi {
+      vertical-align: -.125em;
+      fill: currentColor;
+    }
+
+    body {
+      background-color: #F5F5F5 !important;
+    }
+
+    .bg-body-tertiary {
+      background-color: #F5F5F5 !important;
+    }
+
+    .text-primary {
+      color: #006600 !important;
+    }
+
+    .btn-primary {
+      --bs-btn-bg: #006600;
+      --bs-btn-border-color: #006600;
+      --bs-btn-hover-bg: #1e4d2b;
+      --bs-btn-hover-border-color: #1e4d2b;
+      --bs-btn-active-bg: #1e4d2b;
+    }
+
+    .nav-pills {
+      --bs-nav-pills-link-active-bg: #006600;
+    }
+
+    .nav-link {
+      color: #006600;
+    }
+
+    .nav {
+      --bs-nav-link-color: #006600;
+      --bs-nav-link-hover-color: #006600;
+    }
+
+    .form-check-input:checked {
+      background-color: #006600;
+      border-color: #006600;
+    }
+
+    .form-control:focus {
+      border-color: #28a745 !important;
+      box-shadow: 0 0 0 0.2rem rgba(40, 167, 69, 0.25) !important;
+    }
+
+    .form-select {
+      border-color: #28a745 !important;
+      box-shadow: 0 0 0 0.2rem rgba(40, 167, 69, 0.25) !important;
+    }
+
+    .btn-outline-secondary {
+      --bs-btn-color: #006600;
+      --bs-btn-border-color: #006600;
+      --bs-btn-hover-bg: #006600;
+      --bs-btn-focus-shadow-rgb: #006600;
+    }
+
+    /*Style stuff for making irrelevant input form questions disappear*/
+    .transition-section {
+      max-height: 0;
+      opacity: 0;
+      overflow: hidden;
+      transition: all 0.3s ease;
+    }
+
+    /*Style stuff for making relevant input form questions appear*/
+    .transition-section.open {
+      max-height: 500px;
+      opacity: 1;
+    }
+
+    .collapse {
+      &:not(.show) {
+        display: none;
+      }
+    }
+
+    .accordion-button:not(.collapsed) {
+      background-color: #b3e1a7;
+      color: black;
+    }
+
+    .accordion-button:focus {
+      box-shadow: 0 0 0 0.25rem rgba(168, 230, 161, 0.4);
+    }
+
+    a {
+      color: #006600;
+    }
+
+    a:visited {
+      color: #004d00;
+    }
+
+    a:hover {
+      color: #009900; text-decoration: underline;
+    }
+
+    a:active {
+      color: #003300;
+    }
+
+  </style>
+
+  </style>
+
+  {% include 'components/header.html' %}
+
+</head>
+
+<body>
+  <div class="container">
+
+    <h4 style="margin-bottom: 0.5cm;"> <strong> Disaster Information/Resources </strong> </h4>
+
+    <div class="accordion accordion-flush" id="accordionFlushExample">
+
+      <div class="accordion-item">
+        <h2 class="accordion-header">
+          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapse7" aria-expanded="false" aria-controls="flush-collapse7">
+            <strong> General </strong>
+          </button>
+        </h2>
+        <div id="flush-collapse7" class="accordion-collapse collapse" aria-labelledby="flush-heading7" data-bs-parent="#accordionFlushExample">
+          <div class="accordion-body">
+            <ul>
+              <li> <a href="https://www.fema.gov/" target="_blank"> Federal Emergency Management Agency (FEMA) </a> </li>
+              <li> <a href="https://www.fema.gov/disaster/current" target="_blank"> FEMA: Current Disasters </a> </li>
+              <li> <a href="https://www.fema.gov/locations" target="_blank"> FEMA: Search Your Location </a> </li>
+              <li> <a href="https://www.ready.gov/be-informed" target="_blank"> Ready.gov </a> </li>
+              <li> <a href="https://www.ready.gov/recovering-disaster" target="_blank"> Ready: Recovering from Disaster </a> </li>
+              <li> <a href="https://www.disasterassistance.gov/" target="_blank"> DisasterAssistance.gov </a> </li>
+              <li> <a href="https://www.usda.gov/about-usda/disaster-resource-center" target="_blank"> U.S. Department of Agriculture: Disaster Resource Center </a> </li>
+              <li> <a href="https://www.nnlm.gov/guides/emergency-and-disaster-resources" target="_blank"> National Library of Medicine: Emergency and Disaster Resources </a> </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="accordion-item">
+        <h2 class="accordion-header">
+          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseOne" aria-expanded="false" aria-controls="flush-collapseOne">
+            <strong> Tsunamis </strong>
+          </button>
+        </h2>
+        <div id="flush-collapseOne" class="accordion-collapse collapse" aria-labelledby="flush-headingOne" data-bs-parent="#accordionFlushExample">
+          <div class="accordion-body">
+            <ul>
+              <li> <a href="https://www.ready.gov/tsunamis" target="_blank"> Ready: Tsunamis </a> </li>
+              <li> <a href="https://www.tsunami.gov/" target="_blank"> U.S. Tsunami Warning System </a> </li>
+              <li> <a href="https://www.weather.gov/safety/tsunami-twc" target="_blank"> National Weather Service: Tsunami Warning Centers </a> </li>
+              <li> <a href="https://www.weather.gov/safety/tsunami-outreach" target="_blank"> National Weather Service: Tsunami Education and Outreach Materials </a> </li>
+              <li> <a href="https://www.noaa.gov/education/resource-collections/ocean-coasts/tsunamis" target="_blank"> National Oceanic and Atmospheric Administration: Tsunamis </a> </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="accordion-item">
+        <h2 class="accordion-header" id="flush-headingTwo">
+          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseTwo" aria-expanded="false" aria-controls="flush-collapseTwo">
+            <strong> Wildfires </strong>
+          </button>
+        </h2>
+        <div id="flush-collapseTwo" class="accordion-collapse collapse" aria-labelledby="flush-headingTwo" data-bs-parent="#accordionFlushExample">
+          <div class="accordion-body">
+            <ul>
+              <li> <a href="https://www.fema.gov/disaster/wildfire-actions" target="_blank"> FEMA: Wildfire Actions </a> </li>
+              <li> <a href="https://www.ready.gov/wildfires" target="_blank"> Ready: Wildfires </a> </li>
+              <li> <a href="https://www.usda.gov/forestry/disaster-resource-center/wildland-fire" target="_blank"> U.S. Department of Agriculture: Wildland Fire </a> </li>
+              <li> <a href="https://medlineplus.gov/wildfires.html" target="_blank"> MedlinePlus: Wildfires </a> </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="accordion-item">
+        <h2 class="accordion-header" id="flush-headingThree">
+          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseThree" aria-expanded="false" aria-controls="flush-collapseThree">
+            <strong> Hurricanes </strong>
+          </button>
+        </h2>
+        <div id="flush-collapseThree" class="accordion-collapse collapse" aria-labelledby="flush-headingThree" data-bs-parent="#accordionFlushExample">
+          <div class="accordion-body">
+            <ul>
+              <li> <a href="https://www.fema.gov/emergency-managers/risk-management/hurricane-wind-water-surge" target="_blank"> FEMA: Hurricane, Wind & Water Surge Hazards </a> </li>
+              <li> <a href="https://www.ready.gov/hurricanes" target="_blank"> Ready: Hurricanes </a> </li>
+              <li> <a href="https://www.usda.gov/about-usda/disaster-resource-center/weather-events" target="_blank"> U.S. Department of Agriculture: Weather Events </a> </li>
+              <li> <a href="https://medlineplus.gov/hurricanes.html" target="_blank"> MedlinePlus: Hurricanes </a> </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="accordion-item">
+        <h2 class="accordion-header" id="flush-heading4">
+          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapse4" aria-expanded="false" aria-controls="flush-collapse4">
+            <strong> Earthquakes </strong>
+          </button>
+        </h2>
+        <div id="flush-collapse4" class="accordion-collapse collapse" aria-labelledby="flush-heading4" data-bs-parent="#accordionFlushExample">
+          <div class="accordion-body">
+            <ul>
+              <li> <a href="https://www.fema.gov/emergency-managers/risk-management/earthquake" target="_blank"> FEMA: Earthquake Risk </a> </li>
+              <li> <a href="https://www.ready.gov/earthquakes" target="_blank"> Ready: Earthquakes </a> </li>
+              <li> <a href="https://medlineplus.gov/earthquakes.html" target="_blank"> MedlinePlus: Earthquakes </a> </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="accordion-item">
+        <h2 class="accordion-header" id="flush-heading5">
+          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapse5" aria-expanded="false" aria-controls="flush-collapse5">
+            <strong> Pandemics </strong>
+          </button>
+        </h2>
+        <div id="flush-collapse5" class="accordion-collapse collapse" aria-labelledby="flush-heading5" data-bs-parent="#accordionFlushExample">
+          <div class="accordion-body">
+            <ul>
+              <li> <a href="https://www.ready.gov/pandemic" target="_blank"> Ready: Pandemics </a> </li>
+              <li> <a href="https://www.cdc.gov/outbreaks/index.html" target="_blank"> Centers for Disease Control and Prevention: Outbreaks </a> </li>
+
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="accordion-item">
+        <h2 class="accordion-header" id="flush-heading6">
+          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapse6" aria-expanded="false" aria-controls="flush-collapse6">
+            <strong> Floods </strong>
+          </button>
+        </h2>
+        <div id="flush-collapse6" class="accordion-collapse collapse" aria-labelledby="flush-heading6" data-bs-parent="#accordionFlushExample">
+          <div class="accordion-body">
+            <ul>
+              <li> <a href="https://www.ready.gov/floods" target="_blank"> Ready: Floods </a> </li>
+              <li> <a href="https://medlineplus.gov/floods.html" target="_blank"> MedlinePlus: Floods </a> </li>
+              <li> <a href="https://www.fema.gov/flood-maps" target="_blank"> Federal Emergency Management Agency: Flood Maps </a> </li>
+              <li> <a href="https://www.weather.gov/ffc/floods" target="_blank"> National Weather Service: Floods and Flash Floods </a> </li>
+              <li> <a href="https://www.cdc.gov/floods/about/index.html" target="_blank"> Centers for Disease Control and Prevention: Floods </a> </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="accordion-item">
+        <h2 class="accordion-header" id="flush-heading8">
+          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapse8" aria-expanded="false" aria-controls="flush-collapse8">
+            <strong> Volcano Eruptions </strong>
+          </button>
+        </h2>
+        <div id="flush-collapse8" class="accordion-collapse collapse" aria-labelledby="flush-heading8" data-bs-parent="#accordionFlushExample">
+          <div class="accordion-body">
+            <ul>
+              <li> <a href="https://www.ready.gov/volcanoes" target="_blank"> Ready: Volcanoes </a> </li>
+              <li> <a href="https://www.usgs.gov/vhp" target="_blank"> U.S. Geological Survey: Volcano Hazards Program </a> </li>
+              <li> <a href="https://www.epa.gov/natural-disasters/volcanoes" target="_blank"> U.S. Environmental Protection Agency: Volcanoes </a> </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!--Necessary for Boostrap accordion to work-->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"> </script>
+</body>
+
+<footer>
+  {% include 'components/footer.html' %}
+</footer>
+
+</html>

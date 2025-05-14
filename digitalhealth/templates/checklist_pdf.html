@@ -1,0 +1,356 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <style>
+
+    @font-face {
+      font-family: 'Fira Sans';
+      src: url(firasans-regular.otf);
+      font-weight: normal;
+      font-style: normal;
+    }
+
+    @page {
+      margin: 0;
+      size: landscape;
+      background-image: url("{% static 'images/landscape-bg.png' %}");
+      background-position: center center;
+      background-repeat: no-repeat;
+      background-size: cover;
+    }
+
+    body {
+      font-family: 'Fira Sans', sans-serif;
+      font-size: smaller;
+    }
+
+    #columns {
+      column-count: 3;
+      column-gap: 0.4cm;
+      padding-top: 0.5cm;
+    }
+
+    #columns2 {
+      column-count: 3;
+      column-gap: 0.4cm;
+      padding-top: 0.5cm;
+    }
+
+    #columns3 {
+      column-count: 2;
+      column-gap: 0.4cm;
+      padding-top: 0.5cm;
+    }
+
+    #columns p {
+      text-align: justify;
+    }
+
+    .column_section {
+      break-inside: avoid;
+      display: inline-block;
+      width: 100%;
+      border: 2px solid;
+      border-radius: 10px;
+      padding: 10px;
+      background-color: #f9f9f9;
+      box-sizing: border-box;
+    }
+    .column_section h2 {
+      margin-top: 0;
+    }
+
+    .small_section {
+      border: 2px solid;
+      border-radius: 10px;
+      padding: 5px;
+      margin-bottom: 10px;
+    }
+
+    .writing-area {
+      height: 400px;
+      background-image: repeating-linear-gradient(
+          to bottom,
+          #ccc 0,
+          #ccc 1px,
+          transparent 0px,
+          transparent 21px
+      );
+      margin-top: 10px;
+    }
+
+    .two_columns {
+      column-count: 2;
+      column-gap: 0.4cm;
+      padding-top: 0cm;
+      padding-bottom: 0.3cm;
+    }
+
+    .blank_area {
+      height: 100px;
+      margin-top: 10px;
+      background: none;
+    }
+
+    .footer-images{
+      position:fixed;
+      bottom:0.6cm;
+      left:0.6cm;
+      display:flex;
+      gap:0.8cm;
+    }
+
+    .footer-icon{
+      width:2.0cm;
+    }
+
+    .second-page{
+      position:relative;
+    }
+
+    .kit-icons{
+      position: absolute;
+      bottom: -4.2cm;
+      left: 4.4cm;
+      display: flex;
+      gap: 0.1cm;
+    }
+
+    .kit-icons img {
+      width: 4cm;
+    }
+
+    li {
+      line-height: 1.4;
+    }
+
+  </style>
+</head>
+
+<body>
+
+  <!--FIRST PAGE-->
+
+  <h2 style="text-align: center; margin-bottom: 0; margin-top: 0.5cm"> My Family's Emergency Plan </h2>
+  <h5 style="text-align: center; margin-bottom: 0; margin-top: 0.1cm;">
+    Created: {{ created_date|date:"m-d-Y" }}
+  </h5>
+
+  <article id="columns">
+    <!--Reminders Section-->
+    <section>
+      <div class="column_section"
+           style="background: #FAF5E9; border: 2px solid #333; border-radius: 6px;padding: 0.8rem;">
+
+        <h2 style="text-align: center"> Reminders </h2>
+
+        <div class="small_section">
+          <h3 style="margin-left: 1rem; margin-top: 0.5rem;"> General </h3>
+          <ul>
+            <li> Make sure to keep important documents in a safe space or know where it is. </li>
+            <li> Make copies of your important documents just in case it's lost/destroyed. </li>
+            <li> Update your emergency plan every year (Next time: {{ update_date|date:"m-d-Y" }}). </li>
+          </ul>
+        </div>
+
+        <div class="small_section">
+          <h3 style="margin-left: 1rem; margin-top: 0.5rem;"> Fire Safety </h3>
+          <ul>
+            <li>Check fire extinguishers and smoke alarms, replace if needed. </li>
+            {% if housing_type == "apartment" %}
+            <li>Know your apartment layout. </li>
+            {% endif %}
+            {% if housing_type == "unhoused" %}
+            <li>Find nearby shelters if unhoused. </li>
+            {% endif %}
+          </ul>
+        </div>
+
+        {% if non_infant_count > 1 %}
+        <div class="small_section">
+          <h3 style="margin-left: 1rem; margin-top: 0.5rem;"> School Emergency Plan </h3>
+          <ul>
+            <li>Know your children’s school’s emergency plan.</li>
+            <li>Sign up for emergency messages from the school.</li>
+          </ul>
+        </div>
+        {% endif %}
+
+      </div>
+    </section>
+
+    <!--Emergency Meeting Points-->
+    <section>
+      <div class="column_section"
+           style="background: #FAF5E9; border: 2px solid #333; border-radius: 6px;padding: 0.8rem;">
+
+        <h2 style="text-align: center "> Emergency Meeting Locations </h2>
+
+        <div class="small_section">
+          <h3 style="margin-top: 0.5rem; margin-left: 0.5rem;"> Primary </h3>
+          <p style="text-align: left !important; margin-left: 0.5rem;"> {{ meeting_info}} </p>
+        </div>
+
+        <div class="small_section">
+          <h3 style="margin-top: 0.5rem; margin-left: 0.5rem;"> Secondary </h3>
+          <p style="text-align: left !important; margin-left: 0.5rem;"> {{ meeting_info2 }} </p>
+        </div>
+
+      </div>
+    </section>
+
+    <!--Contact Information Section-->
+    <section>
+      <div class="column_section"
+           style="background: #FAF5E9; border: 2px solid #333; border-radius: 6px;padding: 0.8rem;">
+
+        <h2 style="text-align: center"> Important Contact Information </h2>
+
+        <div class="small_section">
+          <p style="text-align: left !important; margin-left: 0.5rem;"> Please write down important contact information for your family here (family members, doctors, etc.):</p>
+          <div style="margin-left: 0.2rem; margin-right: 0.2rem" class="writing-area"></div>
+        </div>
+
+      </div>
+    </section>
+  </article>
+
+  <!--SECOND PAGE-->
+  <div style="padding-top: 0.5cm;">
+    <h2 style="text-align: center; margin-bottom: 0.5cm;"> My Family's Emergency Kit </h2>
+  </div>
+
+  <article id="columns2" class="second-page">
+
+    <div class="kit-icons">
+      <img src="{% static 'images/cannedfood.png' %}" alt="Canned-food">
+      <img src="{% static 'images/water.png' %}"     alt="Water jug">
+      <img src="{% static 'images/multitool.png' %}" alt="Multi-tool">
+      <img src="{% static 'images/documents.png' %}" alt="Documents">
+      <img src="{% static 'images/charger.png' %}" alt="Charger">
+    </div>
+
+    <section>
+      <div class="column_section"
+           style="background: #FAF5E9; border: 2px solid #333; border-radius: 6px;padding: 0.8rem;">
+        <h3 style="margin-left: 1rem; margin-top: 0.5rem;"> Food & Water </h3>
+        <ul>
+          <li> Canned, Non‑Perishable Food (Enough for {{ non_infant_count }} people for 14 days) </li>
+          <li> Water (1 gallon per person per day; {{ water_gallons }} gallons for 14 days) </li>
+          {% if pets == "yes" %}
+          <li>Pet Food</li>
+          {% endif %}
+        </ul>
+      </div>
+    </section>
+
+    <section style="padding-top: 15px;">
+      <div class="column_section"
+           style="background: #FAF5E9; border: 2px solid #333; border-radius: 6px;padding: 0.8rem;">
+          <h3 style="margin-left: 1rem; margin-top: 0.5rem;"> Supplies </h3>
+          <ul>
+            <li> Extra Clothing </li>
+            <li> Toiletries </li>
+            <li> First Aid Kit </li>
+            <li> Non-Prescription Medications (Painkillers, etc.) </li>
+            <li> Sanitation (Disinfecting Wipes, Face Masks, Hand Sanitizer, etc.) </li>
+          </ul>
+      </div>
+    </section>
+
+    {% if infant_number > 0 %}
+    <section>
+      <div class="column_section"
+           style="background: #FAF5E9; border: 2px solid #333; border-radius: 6px;padding: 0.8rem;">
+          <h3 style="margin-left: 1rem; margin-top: 0.5rem;"> Baby Supplies </h3>
+          <ul>
+            <li> Baby Food (Enough for {{ infant_number }} infant(s) for 14 days) </li>
+            <li> Cooler for Formula/Breast Milk </li>
+            <li> Diapers (10 diapers per baby per day; {{ diaper_count }} diapers for 14 days) </li>
+            <li> Baby Powder </li>
+            <li> Baby Wipes </li>
+            <li> Diaper Cream </li>
+            <li> Baby Wash and Lotion </li>
+            <li> Infant Clothes </li>
+          </ul>
+      </div>
+    </section>
+    {% endif %}
+
+    {% if mobility != "no" or medical_equipment != "no" or meds != "no" or sensory != "no" %}
+    <section
+      {% if infant_number > 0 %}
+      style="padding-top: 15px;"
+      {% endif %}>
+    {% endif %}
+      <div class="column_section"
+           style="background: #FAF5E9; border: 2px solid #333; border-radius: 6px;padding: 0.8rem;">
+          <h3 style="margin-left: 1rem; margin-top: 0.5rem;"> Important Documents </h3>
+          <ul>
+            <li> Driver's License/ID </li>
+            <li> SSN Card </li>
+            <li> Birth Certificate </li>
+            <li> Health Insurance Card </li>
+            <li> Passport </li>
+            {% if housing_type == "home" or housing_type == "apartment" %}
+            <li> Home/Renter's Insurance </li>
+            {% endif %}
+            <li> Extra Cash </li>
+          </ul>
+      </div>
+    </section>
+
+
+    {% if mobility != "no" or medical_equipment != "no" or meds != "no" or sensory != "no" %}
+    <section {% if infant_number == 0 %}
+    style="padding-top: 15px;"
+    {% endif %}>
+      <div class="column_section"
+           style="background: #FAF5E9; border: 2px solid #333; border-radius: 6px;padding: 0.8rem;">
+          <h3 style="margin-left: 1rem; margin-top: 0.5rem;"> Medical and Functional Needs </h3>
+          <ul>
+            {% if mobility == "yes" %}
+            <li> Mobility Assistance (Wheelchairs, Walkers, Canes, Crutches, etc.) </li>
+            {% endif %}
+            {% if medical_equipment == "yes" %}
+            <li> Specialized Medical Equipment (Inhaler, CPAP Machine, Nebulizers, etc.) </li>
+            <li> Portable Generator for Equipment </li>
+            {% endif %}
+            {% if meds == "yes" %}
+            <li> Prescription Medication (Insulin, etc.) </li>
+            {% endif %}
+            {% if sensory == "yes" %}
+            <li> Glasses/Contacts </li>
+            <li> Hearing Aids </li>
+            {% endif %}
+            {% if medical_equipment == "yes" %}
+            <li> Dentures </li>
+            {% endif %}
+          </ul>
+      </div>
+    </section>
+    {% endif %}
+
+    <section {% if infant_number > 0 %} style="padding-top: 15px;" {% endif %}>
+      <div class="column_section" style="background: #FAF5E9; border: 2px solid #333; border-radius: 6px;padding: 0.8rem;">
+        <h3 style="margin-left: 1rem; margin-top: 0.5rem;"> Electronics & Tools </h3>
+        <ul>
+          <li> Phone Chargers </li>
+          <li> Flashlight </li>
+          <li> Extra Batteries </li>
+          <li> Radio </li>
+          <li> Can Opener </li>
+          <li> Multi-Tool </li>
+          <li> Matches </li>
+          <li> Thermometer </li>
+        </ul>
+      </div>
+    </section>
+
+  </article>
+</body>
+
+</html>

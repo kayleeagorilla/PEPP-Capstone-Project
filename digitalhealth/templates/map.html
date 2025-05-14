@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/polyfills/3.111.0/polyfill.min.js"></script>
+
+  <!--Necessary for Bootstrap to work-->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+
+  <!-- Load the Google Maps API -->
+  <script async
+    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAgXU4QcyBV3t9bYAqX0XCc_L6BLy0Wtc0&loading=async&callback=initMap">
+  </script>
+
+  <script>
+    let map;
+    let isPublicSchoolsLoaded = false; // Flag to track if the file is loaded
+    let publicSchoolsData = []; // Store public schools data
+    var markerInfoWindow = [];
+    let currentMarker = null; // Store the current marker
+    let schoolMarkers = []; // Array to store the school markers
+
+    function initMap() {
+      // Initialize the map
+      map = new google.maps.Map(document.getElementById('map'), {
+        center: { lat: 21.370972, lng: -157.958206 }, // Adjust to your desired center
+        zoom: 10,
+      });
+
+      // Load multiple GeoJSON files
+      const geoJsonFiles = [
+        { file: '/static/data/HIGH_RISK_Tsunami_Evacuation_Zones.geojson?v=1', name: 'HIGH_RISK_Tsunami_Evacuation_Zones' },
+        { file: '/static/data/LOW_NO_RISK_Tsunami_Safe_Zones.geojson?v=1', name: 'LOW_NO_RISK_Tsunami_Evacuation_Zones' },
+        { file: '/static/data/MED_RISK_Extreme_Tsunami_Evacuation_Zones.geojson?v=1', name: 'MED_RISK_Tsunami_Evacuation_Zones' }
+      ];
+
+      geoJsonFiles.forEach(({ file, name }) => {
+        map.data.loadGeoJson(file, null, (features) => {
+          features.forEach((feature) => {
+            feature.setProperty('sourceName', name); // Attach the name to each feature
+          });
+        });
+      });
+
+      // Style the GeoJSON data to make zones invisible initially
+      map.data.setStyle(function (feature) {
+        return {
+          fillColor: 'transparent', // Initially invisible
+          strokeColor: 'black', // Border color
+          strokeWeight: 0,
+          fillOpacity: 0, // Fully transparent
+        };
+      });
+
+      // Load the Public Schools GeoJSON file into memory
+      fetch('/static/data/Public_Schools.geojson?v=1')
+        .then((response) => response.json())
+        .then((data) => {
+          publicSchoolsData = data.features; // Store the features in memory
+        });
+
+      // Add a click listener to make the clicked zone visible
+      map.data.addListener('click', function (event) {
+        const sourceName = event.feature.getProperty('sourceName'); // Get the source name
+        const clickedLocation = event.latLng; // Get the clicked location
+
+        // Remove the clicked marker if it exists
+        if (currentMarker) {
+            currentMarker.setMap(null); // Remove the existing marker from the map
+        }
+
+        // Add a new marker at the clicked location
+        currentMarker = new google.maps.Marker({
+            position: clickedLocation,
+            map: map,
+            title: "Clicked Location",
+        });
+
+        // Display the description in the info box
+        let description = "";
+        if (sourceName === 'HIGH_RISK_Tsunami_Evacuation_Zones') {
+            description = `
+                <b>Tsunami Risk: HIGH</b><br>
+                Evacuate if a tsunami warning is issued.<br><br>
+                <button onclick="window.location.href='/resources';" style="background-color: #0066cc; color: white; border: none; padding: 10px 15px; border-radius: 5px; cursor: pointer;">
+                    Stay informed
+                </button>
+            `;
+        } else if (sourceName === 'LOW_NO_RISK_Tsunami_Evacuation_Zones') {
+            description = `
+                <b>Tsunami Risk: LOW</b><br>
+                This is a safe zone.<br><br>
+                <button onclick="window.location.href='/resources';" style="background-color: #0066cc; color: white; border: none; padding: 10px 15px; border-radius: 5px; cursor: pointer;">
+                    Stay informed
+                </button>
+            `;
+        } else if (sourceName === 'MED_RISK_Tsunami_Evacuation_Zones') {
+            description = `
+                <b>Tsunami Risk: MEDIUM</b><br>
+                Be prepared to evacuate if tsunami conditions worsen.<br><br>
+                <button onclick="window.location.href='/resources';" style="background-color: #0066cc; color: white; border: none; padding: 10px 15px; border-radius: 5px; cursor: pointer;">
+                    Stay informed
+                </button>
+            `;
+        } else {
+            description = `
+                Unknown Layer<br><br>
+                <button onclick="window.location.href='/resources';" style="background-color: #0066cc; color: white; border: none; padding: 10px 15px; border-radius: 5px; cursor: pointer;">
+                    Stay informed
+                </button>
+            `;
+        }
+
+        const zoneInfoBox = document.getElementById('zone-info-box');
+        const zoneInfoText = document.getElementById('zone-info-text');
+        zoneInfoText.innerHTML = description;
+        zoneInfoBox.style.display = 'block';
+
+        // Show the 3 nearest schools
+        showNearestSchools(clickedLocation);
+      });
+
+      // Show the info box with the default message when the page loads
+      const zoneInfoBox = document.getElementById('zone-info-box');
+      const zoneInfoText = document.getElementById('zone-info-text');
+      zoneInfoText.textContent = "Click the map to see the Tsunami Risk";
+      zoneInfoBox.style.display = 'block';
+    }
+    
+
+    function togglePublicSchools() {
+      if (isPublicSchoolsLoaded) {
+        // Unload the Public Schools GeoJSON file
+        map.data.forEach((feature) => {
+          if (feature.getProperty('sourceName') === 'Public_Schools') {
+            map.data.remove(feature); // Remove the feature from the map
+          }
+        });
+        isPublicSchoolsLoaded = false; // Update the flag
+        document.getElementById('load-schools-btn').textContent = 'Show Public Schools'; // Update button text
+      } else {
+        // Load the Public Schools GeoJSON file
+        loadGeoJsonFile('/static/data/Public_Schools.geojson?v=1', 'Public_Schools');
+        isPublicSchoolsLoaded = true; // Update the flag
+        document.getElementById('load-schools-btn').textContent = 'Hide Public Schools'; // Update button text
+      }
+    }
+
+
+
+    
+
+    function loadGeoJsonFile(file, name) {
+      map.data.loadGeoJson(file, null, (features) => {
+        features.forEach((feature) => {
+          feature.setProperty('sourceName', name); // Attach the source name
+        });
+      });
+    }
+
+    function resetMap() {
+      // Reset all styles for all features on the map
+      map.data.forEach((feature) => {
+        map.data.revertStyle(feature); // Reset the style of the feature
+        if (feature.getProperty('sourceName') === 'Public_Schools') {
+          map.data.remove(feature); // Remove the feature from the map
+        }
+      });
+
+      // Clear existing school markers
+      schoolMarkers.forEach((marker) => marker.setMap(null)); // Remove all markers from the map
+      schoolMarkers = []; // Reset the markers array
+
+      // Remove the clicked marker if it exists
+      if (currentMarker) {
+        currentMarker.setMap(null);
+        currentMarker = null; // Reset the currentMarker variable
+      }
+
+      // Hide the zone-info-box
+      const zoneInfoBox = document.getElementById('zone-info-box');
+      zoneInfoBox.style.display = 'none';
+    }
+
+    function showNearestSchools(clickedLocation) {
+      if (!publicSchoolsData || publicSchoolsData.length === 0) {
+        console.error("Public schools data is not loaded.");
+        return;
+      }
+
+      // Calculate distances to all schools
+      const distances = publicSchoolsData.map((school) => {
+        const schoolLocation = {
+          lat: school.geometry.coordinates[1],
+          lng: school.geometry.coordinates[0],
+        };
+        const distance = google.maps.geometry.spherical.computeDistanceBetween(
+          clickedLocation,
+          new google.maps.LatLng(schoolLocation)
+        );
+        return { school, distance };
+      });
+
+      // Sort by distance and get the 3 nearest schools
+      distances.sort((a, b) => a.distance - b.distance);
+      const nearestSchools = distances.slice(0, 3);
+
+      // Clear existing school markers
+      schoolMarkers.forEach((marker) => marker.setMap(null)); // Remove all markers from the map
+      schoolMarkers = []; // Reset the markers array
+
+      // Add the 3 nearest schools to the map with custom icons
+      nearestSchools.forEach(({ school }) => {
+        const schoolLocation = {
+          lat: school.geometry.coordinates[1],
+          lng: school.geometry.coordinates[0],
+        };
+
+        const marker = new google.maps.Marker({
+          position: schoolLocation,
+          map: map,
+          title: school.properties.name || "Public School",
+          icon: {
+            url: "/static/images/publicSchoolMarker.png", // Path to the custom icon
+            scaledSize: new google.maps.Size(32, 32), // Resize the icon (optional)
+          },
+        });
+
+        // Create an InfoWindow for the marker
+        const infoWindow = new google.maps.InfoWindow({
+          content: `<div>
+                      <strong>${school.properties.sch_name || "Unknown School"}</strong><br>
+                      ${school.properties.address || "Address not available"}
+                    </div>`,
+        });
+
+        // Add a click listener to open the InfoWindow
+        marker.addListener("click", () => {
+          infoWindow.open(map, marker);
+        });
+
+        schoolMarkers.push(marker); // Add the marker to the array
+      });
+
+      // Display the info box with school details
+      const schoolInfo = nearestSchools
+        .map(
+          ({ school, distance }) =>
+            `School: ${school.properties.name || "Unknown"}\nDistance: ${(
+              distance / 1000
+            ).toFixed(2)} km`
+        )
+        .join("\n\n");
+
+      {% comment %} const zoneInfoBox = document.getElementById('zone-info-box');
+      const zoneInfoText = document.getElementById('zone-info-text');
+      zoneInfoText.textContent = `Nearest Schools:\n\n${schoolInfo}`;
+      zoneInfoBox.style.display = 'block'; {% endcomment %}
+    }
+
+    window.initMap = initMap;
+  </script>
+
+  <style>
+    .bi {
+      vertical-align: -.125em;
+      fill: currentColor;
+    }
+
+    body {
+      background-color: #F5F5F5 !important;
+    }
+
+    .bg-body-tertiary {
+      background-color: #F5F5F5 !important;
+    }
+
+    .text-primary {
+      color: #006600 !important;
+    }
+
+    .btn-primary {
+      --bs-btn-bg: #006600;
+      --bs-btn-border-color: #006600;
+      --bs-btn-hover-bg: #1e4d2b;
+      --bs-btn-hover-border-color: #1e4d2b;
+      --bs-btn-active-bg: #1e4d2b;
+    }
+
+    .nav-pills {
+      --bs-nav-pills-link-active-bg: #006600;
+    }
+
+    .nav-link {
+      color: #006600;
+    }
+
+    .nav {
+      --bs-nav-link-color: #006600;
+      --bs-nav-link-hover-color: #006600;
+    }
+
+    .form-check-input:checked {
+      background-color: #006600;
+      border-color: #006600;
+    }
+
+    .form-control:focus {
+      border-color: #28a745 !important;
+      box-shadow: 0 0 0 0.2rem rgba(40, 167, 69, 0.25) !important;
+    }
+
+    .form-select {
+      border-color: #28a745 !important;
+      box-shadow: 0 0 0 0.2rem rgba(40, 167, 69, 0.25) !important;
+    }
+
+    .btn-outline-secondary {
+      --bs-btn-color: #006600;
+      --bs-btn-border-color: #006600;
+      --bs-btn-hover-bg: #006600;
+      --bs-btn-focus-shadow-rgb: #006600;
+    }
+
+    /*Style stuff for making irrelevant input form questions disappear*/
+    .transition-section {
+      max-height: 0;
+      opacity: 0;
+      overflow: hidden;
+      transition: all 0.3s ease;
+    }
+
+    /*Style stuff for making relevant input form questions appear*/
+    .transition-section.open {
+      max-height: 500px;
+      opacity: 1;
+    }
+
+    #map {
+      height: 600px;
+      width: 100%;
+    }
+
+    {% comment %} #zone-info-box {
+        position: absolute;
+        bottom: 20px;
+        right: 20px;
+        background-color: white;
+        border: 1px solid black;
+        border-radius: 5px;
+        padding: 20px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+        z-index: 1000;
+        font-size: 14px;
+    } {% endcomment %}
+
+    #map-container {
+        position: relative;
+        height: 600px;
+        width: 100%;
+    }
+
+    {% comment %} #map {
+        height: 100%;
+        width: 100%;
+    } {% endcomment %}
+
+    #zone-info-box {
+        position: absolute;
+        bottom: 20px;
+        right: 20px;
+        background-color: white;
+        border: 1px solid black;
+        border-radius: 5px;
+        padding: 10px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+        z-index: 1000;
+        font-size: 14px;
+    }
+
+    #load-schools-btn {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        z-index: 1000; /* Ensure it appears above the map */
+        background-color: #006600;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        padding: 10px 15px;
+        cursor: pointer;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+    }
+
+    #load-schools-btn:hover {
+        background-color: #1e4d2b;
+    }
+  </style>
+
+  {% include 'components/header.html' %}
+</head>
+
+<body class="bg-body-tertiary">
+  <div class="container mt-5">
+
+      <!-- Map Section -->
+<div id="map-container" style="position: relative;">
+    <div id="map"></div>
+    <div id="zone-info-box" style="display: none;">
+        <button onclick="resetMap()">Close</button>
+        <p id="zone-info-text"></p>
+    </div>
+
+    <!-- Button to load Public Schools -->
+    {% comment %} <button id="load-schools-btn" onclick="togglePublicSchools()">
+        Load Public Schools
+    </button> {% endcomment %}
+</div>
+      
+  </div>
+
+<!--Necessary for Bootstrap to work-->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js" integrity="sha384-0pUGZvbkm6XF6gxjEnlmuGrJXVbNuzT9qBBavbLwCsOGabYfZo0T0to5eqruptLy" crossorigin="anonymous"></script>
+</body>
+
+{% include 'components/footer.html' %}
+
+</html>
